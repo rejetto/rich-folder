@@ -25,16 +25,17 @@
 
     const load = HFS.debounceAsync(uri =>
             renderWithoutFetching ? new Promise(res => setTimeout(() =>
-                    res(setRendered(renderWithoutFetching(uri))) ))
+                    res(setRendered?.(renderWithoutFetching(uri))) ))
                 : fetch(uri).then(x => x.text()).then(x => Promise.resolve(renderFetched(x)).then(setRendered)),
         0, { cancelable: true })
     HFS.watchState('uri', () => {
         load.cancel()
         setRendered?.('')
     })
-    HFS.onEvent('entry', ({ entry }) => {
-        if (fileMatch(entry.n))
-            load(entry.n)
+    HFS.onEvent('entry', ({ entry: { n } }) => {
+        if (!fileMatch(n)) return
+        load(n)
+        if (cfg.hide) return null
     })
 
 }
