@@ -1,6 +1,6 @@
-exports.version = 1.1
-exports.description = "Show the content of a file on top of the list"
-exports.apiRequired = 8.88 // async loadScript, HFS.html, event/entry/null
+exports.version = 1.11
+exports.description = "Show the content of a file on top of the list. With this plugin you can mimic GitHub in showing README.md when you enter a folder."
+exports.apiRequired = 8.9 // new debounceAsync api
 exports.repo = "rejetto/rich-folder"
 exports.frontend_js = 'main.js'
 exports.config = {

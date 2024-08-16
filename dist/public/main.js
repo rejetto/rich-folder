@@ -27,7 +27,7 @@
             renderWithoutFetching ? new Promise(res => setTimeout(() =>
                     res(setRendered?.(renderWithoutFetching(uri))) ))
                 : fetch(uri).then(x => x.text()).then(x => Promise.resolve(renderFetched(x)).then(setRendered)),
-        0, { cancelable: true })
+        { cancelable: true })
     HFS.watchState('uri', () => {
         load.cancel()
         setRendered?.('')
