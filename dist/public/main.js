@@ -20,7 +20,7 @@
     function Show() {
         let [rendered, _setRendered] = HFS.React.useState(null)
         setRendered = _setRendered
-        return rendered
+        return rendered && HFS.h('div', { id: 'rich-folder-content' }, rendered)
     }
 
     const load = HFS.debounceAsync(uri =>
