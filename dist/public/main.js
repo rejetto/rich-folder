@@ -32,9 +32,9 @@
         load.cancel()
         setRendered?.('')
     })
-    HFS.onEvent('entry', ({ entry: { n } }) => {
-        if (!fileMatch(n)) return
-        load(n)
+    HFS.onEvent('entry', ({ entry }) => {
+        if (entry.isFolder || !fileMatch(entry.n)) return
+        load(entry.n)
         if (cfg.hide) return null
     })
 
