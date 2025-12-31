@@ -1,5 +1,4 @@
-"use strict";
-{
+"use strict";{
     const cfg = HFS.getPluginConfig()
     const fileMatch = HFS.misc.makeMatcher(cfg.filename.replace('.*', '.' + cfg.format))
     const libLoaded = HFS.misc.pendingPromise()
@@ -28,14 +27,20 @@
                     res(setRendered?.(renderWithoutFetching(uri))) ))
                 : fetch(uri).then(x => x.text()).then(x => Promise.resolve(renderFetched(x)).then(setRendered)),
         { cancelable: true })
+    let found = false
     HFS.watchState('uri', () => {
+        found = false
         load.cancel()
         setRendered?.('')
     })
-    HFS.onEvent('entry', ({ entry }) => {
-        if (entry.isFolder || !fileMatch(entry.n)) return
-        load(entry.n)
-        if (cfg.hide) return null
+    HFS.onEvent('newListEntries', ({ entries }) => {
+        entries.forEach((x, i) => {
+            if (found || x.isFolder || !fileMatch(x.n)) return
+            found = true
+            load(x.n)
+            if (cfg.hide) // remove from the list
+                entries.splice(i, 1)
+        })
     })
 
 }
