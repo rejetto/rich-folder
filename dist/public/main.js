@@ -38,7 +38,7 @@
             if (found || x.isFolder || !fileMatch(x.n)) return
             found = true
             load(x.n)
-            if (cfg.hide) // remove from the list
+            if (cfg.hide && !HFS.userBelongsTo(cfg.visibleTo))
                 entries.splice(i, 1)
         })
     })
