@@ -5,7 +5,7 @@
 
     const renderFetched = {
         html: x => HFS.html(x),
-        txt: x => HFS.h('pre', {}, HFS.misc.escapeHTML(x)),
+        txt: x => HFS.h('pre', {}, x),
         md: x => libLoaded.then(() => HFS.html(marked.parse(x))),
     }[cfg.format]
 
@@ -37,7 +37,7 @@
         entries.forEach((x, i) => {
             if (found || x.isFolder || !fileMatch(x.n)) return
             found = true
-            load(x.n)
+            load(x.uri)
             if (cfg.hide && !HFS.userBelongsTo(cfg.visibleTo))
                 entries.splice(i, 1)
         })

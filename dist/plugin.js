@@ -1,10 +1,11 @@
-exports.version = 1.2
+exports.version = 1.21
 exports.description = "Show the content of a file on top of the list. With this plugin you can mimic GitHub in showing README.md when you enter a folder."
 exports.apiRequired = 9.6 // userBelongsTo
 exports.repo = "rejetto/rich-folder"
 exports.frontend_js = 'main.js'
 exports.frontend_css = 'style.css'
 exports.changelog = [
+    { "version": 1.21, "message": "Fix: Load special filenames correctly and display plain text without HTML entities" },
     { "version": 1.20, "message": "let selected usernames keep the special file visible in the list" },
     { "version": 1.14, "message": "fix: file not displayed in case of paginated list" },
     { "version": 1.13, "message": "fix: crash when a folder matches the filename mask" }
