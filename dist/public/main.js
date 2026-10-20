@@ -28,7 +28,8 @@
                 : fetch(uri).then(x => x.text()).then(x => Promise.resolve(renderFetched(x)).then(setRendered)),
         { cancelable: true })
     let found = false
-    HFS.watchState('uri', () => {
+    HFS.watchState('loading', loading => {
+        if (!loading) return
         found = false
         load.cancel()
         setRendered?.('')

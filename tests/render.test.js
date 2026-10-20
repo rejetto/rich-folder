@@ -5,10 +5,12 @@ const { test } = require('node:test')
 
 const source = fs.readFileSync(`${__dirname}/../dist/public/main.js`, 'utf8')
 
-test('fetches the encoded URI and lets React escape plain text', async () => {
+test('renders encoded plain text and reapplies visibility after a list reload', async () => {
     const events = {}
+    const watches = {}
     let fetched
     let rendered
+    let belongs = true
     const context = {
         fetch: async uri => {
             fetched = uri
@@ -17,7 +19,7 @@ test('fetches the encoded URI and lets React escape plain text', async () => {
         HFS: {
             React: { useState: () => [null, value => { rendered = value }] },
             debounceAsync: fn => Object.assign(fn, { cancel() {} }),
-            getPluginConfig: () => ({ filename: 'readme.*', format: 'txt', where: 'afterHeader' }),
+            getPluginConfig: () => ({ filename: 'readme.*', format: 'txt', where: 'afterHeader', hide: true, visibleTo: ['u'] }),
             h: (type, props, ...children) => typeof type === 'function' ? type() : ({ type, children }),
             html: value => value,
             misc: {
@@ -26,16 +28,24 @@ test('fetches the encoded URI and lets React escape plain text', async () => {
                 escapeHTML: value => value.replaceAll('<', '&lt;').replaceAll('&', '&amp;'),
             },
             onEvent: (name, callback) => { events[name] = callback },
-            userBelongsTo: () => false,
-            watchState() {},
+            userBelongsTo: () => belongs,
+            watchState(name, callback) { watches[name] = callback },
         },
         setTimeout,
     }
     vm.runInNewContext(source, context)
     events.afterHeader()
-    events.newListEntries({ entries: [{ n: 'read#me.txt', uri: '/folder/read%23me.txt' }] })
+    const entries = [{ n: 'read#me.txt', uri: '/folder/read%23me.txt' }]
+    events.newListEntries({ entries })
     await new Promise(setImmediate)
 
     assert.equal(fetched, '/folder/read%23me.txt')
     assert.equal(rendered.children[0], '<tag>&')
+    assert.equal(entries.length, 1)
+
+    belongs = false
+    watches.loading(true)
+    const reloadedEntries = [{ n: 'read#me.txt', uri: '/folder/read%23me.txt' }]
+    events.newListEntries({ entries: reloadedEntries })
+    assert.equal(reloadedEntries.length, 0)
 })
